@@ -12,6 +12,11 @@
 
 #include "Shader.h"
 
+// GLM
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 const GLuint WIDTH = 800, HEIGHT = 600;
 
 GLfloat mixVal = 0.2f;  // default
@@ -206,9 +211,32 @@ int main() {
         GLuint timeLoc = glGetUniformLocation( ourShader.Program, "time" );
         glUniform1f( timeLoc, timeValue );
         
+        // TRANSFORMATION
+        glm::mat4 trans = glm::mat4(1.0f);
+        // first translating, then rotation
+        trans = glm::rotate( trans, (GLfloat) glfwGetTime(), glm::vec3( 0.0, 0.0, 1.0 ) );
+        trans = glm::translate( trans, glm::vec3( -0.3f, -0.5f, 0.0f ) );
+        trans = glm::scale( trans, glm::vec3( 0.5, 0.5, 0.5 ) );
         
+        GLuint matLoc = glGetUniformLocation( ourShader.Program, "matrix" );
+        glUniformMatrix4fv( matLoc, 1, GL_FALSE ,glm::value_ptr( trans ) );
+        
+        // DRAW
         glBindVertexArray( VAO );
         //glDrawArrays( GL_TRIANGLES, 0, 9 );
+        glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+        glBindVertexArray( 0 );
+        
+        // DRAWING SECOND RECTANGLE
+        
+        trans = glm::translate( trans, glm::vec3( -1.0f, 1.0f, 0.0f ) );
+        GLfloat scaleAmount = sin( timeValue ) / 2.0;
+        std::cout << "Scale amount" << scaleAmount << std::endl;
+        trans = glm::scale( trans, glm::vec3( scaleAmount, scaleAmount, scaleAmount ) );
+        
+        glUniformMatrix4fv( matLoc, 1, GL_FALSE , &trans[0][0] );
+        
+        glBindVertexArray( VAO );
         glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
         glBindVertexArray( 0 );
         
