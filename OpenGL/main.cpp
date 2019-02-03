@@ -212,14 +212,31 @@ int main() {
         glUniform1f( timeLoc, timeValue );
         
         // TRANSFORMATION
-        glm::mat4 trans = glm::mat4(1.0f);
-        // first translating, then rotation
-        trans = glm::rotate( trans, (GLfloat) glfwGetTime(), glm::vec3( 0.0, 0.0, 1.0 ) );
-        trans = glm::translate( trans, glm::vec3( -0.3f, -0.5f, 0.0f ) );
-        trans = glm::scale( trans, glm::vec3( 0.5, 0.5, 0.5 ) );
+//        glm::mat4 trans = glm::mat4(1.0f);
+//        // first translating, then rotation
+//        trans = glm::rotate( trans, (GLfloat) glfwGetTime(), glm::vec3( 0.0, 0.0, 1.0 ) );
+//        trans = glm::translate( trans, glm::vec3( -0.3f, -0.5f, 0.0f ) );
+//        trans = glm::scale( trans, glm::vec3( 0.5, 0.5, 0.5 ) );
+//
+//        GLuint matLoc = glGetUniformLocation( ourShader.Program, "matrix" );
+//        glUniformMatrix4fv( matLoc, 1, GL_FALSE, glm::value_ptr( trans ) );
         
-        GLuint matLoc = glGetUniformLocation( ourShader.Program, "matrix" );
-        glUniformMatrix4fv( matLoc, 1, GL_FALSE ,glm::value_ptr( trans ) );
+        // COORDINATE SYSTEMS
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate( model, glm::radians( -55.0f ), glm::vec3( 1.0f, 0.0f, 0.0f ) );
+        GLuint modelLoc = glGetUniformLocation( ourShader.Program, "model" );
+        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+        
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::translate( view, glm::vec3( 0.0f, 0.0f, -3.0f ) );
+        GLuint viewLoc = glGetUniformLocation( ourShader.Program, "view" );
+        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+        
+        glm::mat4 projection;
+        projection = glm::perspective( glm::radians( 45.0f ), (GLfloat) screenWidth / (GLfloat) screenHeight, 0.1f, 100.f );
+        GLuint projLoc = glGetUniformLocation( ourShader.Program, "projection" );
+        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
+        
         
         // DRAW
         glBindVertexArray( VAO );
@@ -228,17 +245,17 @@ int main() {
         glBindVertexArray( 0 );
         
         // DRAWING SECOND RECTANGLE
-        
-        trans = glm::translate( trans, glm::vec3( -1.0f, 1.0f, 0.0f ) );
-        GLfloat scaleAmount = sin( timeValue ) / 2.0;
-        std::cout << "Scale amount" << scaleAmount << std::endl;
-        trans = glm::scale( trans, glm::vec3( scaleAmount, scaleAmount, scaleAmount ) );
-        
-        glUniformMatrix4fv( matLoc, 1, GL_FALSE , &trans[0][0] );
-        
-        glBindVertexArray( VAO );
-        glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
-        glBindVertexArray( 0 );
+//
+//        trans = glm::translate( trans, glm::vec3( -1.0f, 1.0f, 0.0f ) );
+//        GLfloat scaleAmount = sin( timeValue ) / 2.0;
+//        std::cout << "Scale amount" << scaleAmount << std::endl;
+//        trans = glm::scale( trans, glm::vec3( scaleAmount, scaleAmount, scaleAmount ) );
+//
+//        glUniformMatrix4fv( matLoc, 1, GL_FALSE , &trans[0][0] );
+//
+//        glBindVertexArray( VAO );
+//        glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+//        glBindVertexArray( 0 );
         
         // swap screen buffers
         glfwSwapBuffers( window );
