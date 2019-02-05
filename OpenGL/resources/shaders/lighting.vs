@@ -13,7 +13,7 @@ uniform mat4 view;
 uniform mat4 projection;
 
 void main() {
-   // float horizOffset = 0.3;
+    float horizOffset = 0.3;
     gl_Position = projection * view * model * vec4( position.x, position.y, position.z, 1.0f );
     fColor = oColor;
     fPosition = position;

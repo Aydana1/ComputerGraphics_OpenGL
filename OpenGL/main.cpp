@@ -60,6 +60,9 @@ int main() {
     
     glViewport(0, 0, screenWidth, screenHeight);
     
+    // enable depth test
+    glEnable( GL_DEPTH_TEST );
+    
     // enable blending
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -80,17 +83,61 @@ int main() {
     };
     
     GLfloat triangles[] = {
-        0.5f, 0.0f, 0.0f,       0.25f, 0.5f, 0.62f,     2.0f, 0.0f,
-        0.25f, 0.5f, 0.0f,      0.95f, 0.5f, 0.62f,     1.0f, 2.0f,
-        0.0f, 0.0f, 0.0f,       0.25f, 0.5f, 0.62f,     0.0f, 0.0f,
-        
+//        0.5f, 0.0f, 0.0f,       0.25f, 0.5f, 0.62f,     2.0f, 0.0f,
+//        0.25f, 0.5f, 0.0f,      0.95f, 0.5f, 0.62f,     1.0f, 2.0f,
+//        0.0f, 0.0f, 0.0f,       0.25f, 0.5f, 0.62f,     0.0f, 0.0f,
+//
         0.0f, 0.0f, 0.0f,       0.95f, 0.5f, 0.62f,     2.0f, 0.0f,
         -0.25f, 0.5f, 0.0f,     0.75f, 0.85f, 0.62f,    1.0f, 2.0f,
         -0.5f, 0.0f, 0.0f,      0.95f, 0.5f, 0.62f,     0.0f, 0.0f,
+//
+//        0.25f, -0.5f, 0.0f,     0.75f, 0.85f, 0.62f,    2.0f, 0.0f,
+//        0.0f, 0.0f, 0.0f,       0.25f, 0.5f, 0.62f,     1.0f, 2.0f,
+//        -0.25f, -0.5f, 0.0f,    0.75f, 0.85f, 0.62f,    0.0f, 0.0f,
+    };
+    
+    GLfloat cube[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
         
-        0.25f, -0.5f, 0.0f,     0.75f, 0.85f, 0.62f,    2.0f, 0.0f,
-        0.0f, 0.0f, 0.0f,       0.25f, 0.5f, 0.62f,     1.0f, 2.0f,
-        -0.25f, -0.5f, 0.0f,    0.75f, 0.85f, 0.62f,    0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
     
     // CREATE VERTEX ARRAY OBJECT
@@ -102,13 +149,13 @@ int main() {
     glBindVertexArray( VAO );
     
     glBindBuffer( GL_ARRAY_BUFFER, VBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW );
     
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, EBO );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW );
     
     // Position
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), (GLvoid *)0 );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(GLfloat), (GLvoid *)0 );
     glEnableVertexAttribArray(0);
     
     // Color
@@ -116,7 +163,7 @@ int main() {
     glEnableVertexAttribArray(1);
     
     // Texture
-    glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), (GLvoid *) (6*sizeof(GLfloat)) );
+    glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 5*sizeof(GLfloat), (GLvoid *) (3*sizeof(GLfloat)) );
     glEnableVertexAttribArray(2);
     
     glBindVertexArray( 0 );
@@ -170,8 +217,23 @@ int main() {
     ourShader.Use();
     glUniform1i( glGetUniformLocation( ourShader.Program, "texture1" ), 0 ); // texture1 is now at texture unit 0
     glUniform1i( glGetUniformLocation( ourShader.Program, "texture2" ), 1 );
+
+    glm::vec3 cubePositions[] = {
+        glm::vec3( 0.0f,  0.0f,  0.0f),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+    
     
     while( !glfwWindowShouldClose( window ) ) {
+        
         
         // check if any events are enabled such as key, mouse movements
         glfwPollEvents();
@@ -181,7 +243,7 @@ int main() {
         // Render
         // clear color buffer
         glClearColor( 0.2f, 0.2f, 0.2f, 1.0f );
-        glClear( GL_COLOR_BUFFER_BIT );
+        glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         
         // DRAW the rectangle
         ourShader.Use();
@@ -223,26 +285,38 @@ int main() {
         
         // COORDINATE SYSTEMS
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate( model, glm::radians( -55.0f ), glm::vec3( 1.0f, 0.0f, 0.0f ) );
+//        model = glm::rotate( model, (GLfloat) glfwGetTime() * glm::radians(50.0f), glm::vec3( 1.0f, 0.0f, 2.0f) );
         GLuint modelLoc = glGetUniformLocation( ourShader.Program, "model" );
-        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
-        
-        glm::mat4 view = glm::mat4(1.0f);
-        view = glm::translate( view, glm::vec3( 0.0f, 0.0f, -3.0f ) );
-        GLuint viewLoc = glGetUniformLocation( ourShader.Program, "view" );
-        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+//        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         
         glm::mat4 projection;
         projection = glm::perspective( glm::radians( 45.0f ), (GLfloat) screenWidth / (GLfloat) screenHeight, 0.1f, 100.f );
         GLuint projLoc = glGetUniformLocation( ourShader.Program, "projection" );
         glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
         
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::translate( view, glm::vec3( 0.0f, 0.0f, -3.0f ) );
+        GLuint viewLoc = glGetUniformLocation( ourShader.Program, "view" );
+        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
         
-        // DRAW
         glBindVertexArray( VAO );
-        //glDrawArrays( GL_TRIANGLES, 0, 9 );
-        glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+        
+        for(GLuint i = 0; i < 10; i++) {
+            GLfloat angle = 20.0f * i / 5.0;
+            model = glm::translate( model, cubePositions[i] );
+            model = glm::rotate( model, (GLfloat) glfwGetTime() * glm::radians(angle), glm::vec3( 1.0f, 0.3f, 0.5f ) );
+            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+            
+            glDrawArrays( GL_TRIANGLES, 0, 36 );
+        }
+        
         glBindVertexArray( 0 );
+    
+        // DRAW
+//        glBindVertexArray( VAO );
+//        glDrawArrays( GL_TRIANGLES, 0, 36 );
+//        //  glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+//        glBindVertexArray( 0 );
         
         // DRAWING SECOND RECTANGLE
 //
@@ -255,10 +329,10 @@ int main() {
 //
 //        glBindVertexArray( VAO );
 //        glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
-//        glBindVertexArray( 0 );
         
         // swap screen buffers
         glfwSwapBuffers( window );
+
     }
     
     glDeleteVertexArrays( 1, &VAO );
@@ -270,6 +344,7 @@ int main() {
     return EXIT_SUCCESS;
     
 }
+
 
 void processInput( GLFWwindow *window ) {
     
