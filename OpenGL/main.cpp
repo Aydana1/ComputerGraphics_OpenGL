@@ -11,6 +11,7 @@
 #include "SOIL2/SOIL2.h"
 
 #include "Shader.h"
+#include "Camera.h"
 
 // GLM
 #include <glm/glm.hpp>
@@ -22,6 +23,21 @@ const GLuint WIDTH = 800, HEIGHT = 600;
 GLfloat mixVal = 0.2f;  // default
 
 void processInput(GLFWwindow *window);
+// Function prototypes
+void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mode );
+void ScrollCallback( GLFWwindow *window, double xOffset, double yOffset );
+void MouseCallback( GLFWwindow *window, double xPos, double yPos );
+void DoMovement( );
+
+Camera camera( glm::vec3( 0.0f, 0.0f, 3.0f ) );
+
+GLfloat lastX = WIDTH / 2.0;
+GLfloat lastY = HEIGHT / 2.0;
+bool keys[1024];
+bool firstMouse = true;
+
+GLfloat deltaTime = 0.0f;
+GLfloat lastFrame = 0.0f;
 
 int main() {
     
@@ -39,6 +55,16 @@ int main() {
     
     int screenWidth, screenHeight;
     glfwGetFramebufferSize(window, &screenWidth, &screenHeight);  //read screen wdith and height
+    
+    
+    // Set the required callback functions
+    glfwSetKeyCallback( window, KeyCallback );
+    glfwSetCursorPosCallback( window, MouseCallback );
+    glfwSetScrollCallback( window, ScrollCallback );
+    
+    // Options, removes the mouse cursor for a more immersive experience
+    glfwSetInputMode( window, GLFW_CURSOR, GLFW_CURSOR_DISABLED );
+    
     
     //std::cout << "SCREEN DIMENSION: " << screenWidth*screenHeight << "\n";
     
@@ -68,7 +94,8 @@ int main() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     // build and compile shader program
-    Shader ourShader( "resources/shaders/lighting.vs", "resources/shaders/lighting.frag" );
+    Shader lightShader( "resources/shaders/lighting.vs", "resources/shaders/lighting.frag" );
+    Shader lampShader( "resources/shaders/lamp.vs", "resources/shaders/lamp.frag" );
     
     GLfloat vertices[] = {
         0.5f, 0.5f, 0.0f,       0.25f, 0.5f, 0.62f,     1.0f, 1.0f, // Top right
@@ -96,52 +123,54 @@ int main() {
 //        -0.25f, -0.5f, 0.0f,    0.75f, 0.85f, 0.62f,    0.0f, 0.0f,
     };
     
-    GLfloat cube[] = {
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    
+    GLfloat cube_vertices[] =
+    {
+        -0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f,  0.5f, -0.5f,
+        0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
         
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,
+        0.5f, -0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
         
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
         
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,
+        0.5f,  0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,
         
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f,  0.5f,
+        0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f, -0.5f,
         
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+        -0.5f,  0.5f, -0.5f,
+        0.5f,  0.5f, -0.5f,
+        0.5f,  0.5f,  0.5f,
+        0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f
     };
     
     // CREATE VERTEX ARRAY OBJECT
-    GLuint VAO, VBO,EBO;
+    GLuint VAO, VBO, EBO;
     glGenVertexArrays( 1, &VAO );
     glGenBuffers( 1, &VBO );
     glGenBuffers( 1, &EBO );
@@ -149,13 +178,13 @@ int main() {
     glBindVertexArray( VAO );
     
     glBindBuffer( GL_ARRAY_BUFFER, VBO );
-    glBufferData( GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW );
+    glBufferData( GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW );
     
     glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, EBO );
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW );
     
     // Position
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 5*sizeof(GLfloat), (GLvoid *)0 );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), (GLvoid *)0 );
     glEnableVertexAttribArray(0);
     
     // Color
@@ -168,75 +197,30 @@ int main() {
     
     glBindVertexArray( 0 );
     
+    // VAO for LAMP
+    GLuint lampVAO;
+    glGenVertexArrays( 1, &lampVAO );
+    glBindVertexArray( lampVAO );
+    glBindBuffer( GL_ARRAY_BUFFER, VAO ); // bind to VAO since VBO already contains VAO data
+    // fill lampVAO with cube vertices
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), (GLvoid *)0 );
+    glEnableVertexAttribArray( 0 );
     
-    // CREATING TEXTURE
-    GLuint texture1, texture2;
-    
-    int width, height;
-    
-    glGenTextures( 1, &texture1 );
-    glBindTexture( GL_TEXTURE_2D, texture1 );
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    
-    unsigned char *image = SOIL_load_image( "resources/images/brick.jpg", &width, &height, 0, SOIL_LOAD_RGB );
-    if (image) {
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image );
-        glGenerateMipmap( GL_TEXTURE_2D );
-    } else {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    
-    SOIL_free_image_data( image );
-    glBindTexture( GL_TEXTURE_2D, 0 );
-    
-    
-    glGenTextures( 1, &texture2 );
-    glBindTexture( GL_TEXTURE_2D, texture2 );
-    
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    
-    image = SOIL_load_image( "resources/images/cat.png", &width, &height, 0, SOIL_LOAD_RGBA );
-    if (image) {
-        // passing image data to GL_TEXTURE_2D that is texture2 that was bound above
-        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image );
-    } else {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    
-    SOIL_free_image_data( image );
-    glBindTexture( GL_TEXTURE_2D, 0 );
-    
-    // active shader
-    ourShader.Use();
-    glUniform1i( glGetUniformLocation( ourShader.Program, "texture1" ), 0 ); // texture1 is now at texture unit 0
-    glUniform1i( glGetUniformLocation( ourShader.Program, "texture2" ), 1 );
+    glBindVertexArray( 0 );
 
-    glm::vec3 cubePositions[] = {
-        glm::vec3( 0.0f,  0.0f,  0.0f),
-        glm::vec3( 2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3( 2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3( 1.3f, -2.0f, -2.5f),
-        glm::vec3( 1.5f,  2.0f, -2.5f),
-        glm::vec3( 1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
-    
+    glm::mat4 projection;
+    projection = glm::perspective( camera.GetZoom(), (GLfloat) screenWidth / (GLfloat) screenHeight, 0.1f, 100.f );
     
     while( !glfwWindowShouldClose( window ) ) {
         
+        // Set frame time
+        GLfloat currentFrame = glfwGetTime( );
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
         
         // check if any events are enabled such as key, mouse movements
         glfwPollEvents();
+        DoMovement();
         
         processInput( window );
         
@@ -245,90 +229,48 @@ int main() {
         glClearColor( 0.2f, 0.2f, 0.2f, 1.0f );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         
-        // DRAW the rectangle
-        ourShader.Use();
-        
-        // Bind texture
-        glActiveTexture( GL_TEXTURE0 ); // turning on texture unit location 0 in fragment shader before binding
-        glBindTexture( GL_TEXTURE_2D, texture1 );  // bind texture1
-        
-        glActiveTexture( GL_TEXTURE1 );
-        glBindTexture( GL_TEXTURE_2D, texture2 );
-        
-        // ANIMATED COLORING
-        GLfloat timeValue = glfwGetTime();
-        //std::cout << "TIME VALUE: " << timeValue << "\n";
-        GLfloat r = sin(timeValue) / 2.0f + 0.5f;
-        GLfloat g = cos(timeValue) / 2.0f + 0.5f;
-        GLfloat b = sin(timeValue) / 2.0f + 0.8f;
+        // LIGHT SHADER
+        lightShader.Use();
+        GLuint objLoc = glGetUniformLocation( lightShader.Program, "objectColor" );
+        GLuint lightLoc = glGetUniformLocation( lightShader.Program, "lightColor" );
+        glUniform3f( objLoc, 0.5f, 0.78f, 0.96f);  // color of the object
+        glUniform3f( lightLoc, 1.0f, 1.0f, 1.0f);  // white color absorbed from the lamp by the object
 
-        GLuint colorLoc = glGetUniformLocation( ourShader.Program, "newColor" );
-        glUniform4f( colorLoc, r, g, b, 1.0f );  // setting values of newColor vector that is located in fragment shader
+        glm::mat4 view = glm::mat4(1.0f);
+        view = camera.GetViewMatrix();
         
-        // CHANGHING MIXVALUE FOR TEXTURES
-        GLuint mixLoc = glGetUniformLocation( ourShader.Program, "mixValue" );
-        glUniform1f( mixLoc, mixVal );
+        GLuint modelLoc = glGetUniformLocation( lightShader.Program, "model" );
+        GLuint viewLoc = glGetUniformLocation( lightShader.Program, "view" );
+        GLuint projLoc = glGetUniformLocation( lightShader.Program, "projection" );
         
-        // Passing time to frag shader
-        GLuint timeLoc = glGetUniformLocation( ourShader.Program, "time" );
-        glUniform1f( timeLoc, timeValue );
-        
-        // TRANSFORMATION
-//        glm::mat4 trans = glm::mat4(1.0f);
-//        // first translating, then rotation
-//        trans = glm::rotate( trans, (GLfloat) glfwGetTime(), glm::vec3( 0.0, 0.0, 1.0 ) );
-//        trans = glm::translate( trans, glm::vec3( -0.3f, -0.5f, 0.0f ) );
-//        trans = glm::scale( trans, glm::vec3( 0.5, 0.5, 0.5 ) );
-//
-//        GLuint matLoc = glGetUniformLocation( ourShader.Program, "matrix" );
-//        glUniformMatrix4fv( matLoc, 1, GL_FALSE, glm::value_ptr( trans ) );
-        
-        // COORDINATE SYSTEMS
-        glm::mat4 model = glm::mat4(1.0f);
-//        model = glm::rotate( model, (GLfloat) glfwGetTime() * glm::radians(50.0f), glm::vec3( 1.0f, 0.0f, 2.0f) );
-        GLuint modelLoc = glGetUniformLocation( ourShader.Program, "model" );
-//        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
-        
-        glm::mat4 projection;
-        projection = glm::perspective( glm::radians( 45.0f ), (GLfloat) screenWidth / (GLfloat) screenHeight, 0.1f, 100.f );
-        GLuint projLoc = glGetUniformLocation( ourShader.Program, "projection" );
+        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
         glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
         
-        glm::mat4 view = glm::mat4(1.0f);
-        view = glm::translate( view, glm::vec3( 0.0f, 0.0f, -3.0f ) );
-        GLuint viewLoc = glGetUniformLocation( ourShader.Program, "view" );
-        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
-        
         glBindVertexArray( VAO );
-        
-        for(GLuint i = 0; i < 10; i++) {
-            GLfloat angle = 20.0f * i / 5.0;
-            model = glm::translate( model, cubePositions[i] );
-            model = glm::rotate( model, (GLfloat) glfwGetTime() * glm::radians(angle), glm::vec3( 1.0f, 0.3f, 0.5f ) );
-            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
-            
-            glDrawArrays( GL_TRIANGLES, 0, 36 );
-        }
-        
+        glm::mat4 model = glm::mat4(1.0f);
+        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+        glDrawArrays( GL_TRIANGLES, 0, 36 );
         glBindVertexArray( 0 );
     
-        // DRAW
-//        glBindVertexArray( VAO );
-//        glDrawArrays( GL_TRIANGLES, 0, 36 );
-//        //  glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
-//        glBindVertexArray( 0 );
+    
+        // LAMP SHADER
+        lampShader.Use();
         
-        // DRAWING SECOND RECTANGLE
-//
-//        trans = glm::translate( trans, glm::vec3( -1.0f, 1.0f, 0.0f ) );
-//        GLfloat scaleAmount = sin( timeValue ) / 2.0;
-//        std::cout << "Scale amount" << scaleAmount << std::endl;
-//        trans = glm::scale( trans, glm::vec3( scaleAmount, scaleAmount, scaleAmount ) );
-//
-//        glUniformMatrix4fv( matLoc, 1, GL_FALSE , &trans[0][0] );
-//
-//        glBindVertexArray( VAO );
-//        glDrawElements( GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0 );
+        modelLoc = glGetUniformLocation( lampShader.Program, "model" );
+        viewLoc = glGetUniformLocation( lampShader.Program, "view" );
+        projLoc = glGetUniformLocation( lampShader.Program, "projection" );
+        
+        model = glm::mat4(1.0f);
+        model = glm::translate( model, glm::vec3( 1.0f, 1.0f, 2.0f ) );
+        model = glm::scale( model, glm::vec3( 0.2f ) );
+        
+        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+        glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
+        glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
+        
+        glBindVertexArray( lampVAO );
+        glDrawArrays( GL_TRIANGLES, 0, 36 );
+        glBindVertexArray( 0 );
         
         // swap screen buffers
         glfwSwapBuffers( window );
@@ -344,7 +286,6 @@ int main() {
     return EXIT_SUCCESS;
     
 }
-
 
 void processInput( GLFWwindow *window ) {
     
@@ -365,4 +306,74 @@ void processInput( GLFWwindow *window ) {
             mixVal = 0.0f;
         }
     }
+}
+
+// Moves/alters the camera positions based on user input
+void DoMovement( )
+{
+    // Camera controls
+    if( keys[GLFW_KEY_W] || keys[GLFW_KEY_UP] )
+    {
+        camera.ProcessKeyboard( FORWARD, deltaTime );
+    }
+    
+    if( keys[GLFW_KEY_S] || keys[GLFW_KEY_DOWN] )
+    {
+        camera.ProcessKeyboard( BACKWARD, deltaTime );
+    }
+    
+    if( keys[GLFW_KEY_A] || keys[GLFW_KEY_LEFT] )
+    {
+        camera.ProcessKeyboard( LEFT, deltaTime );
+    }
+    
+    if( keys[GLFW_KEY_D] || keys[GLFW_KEY_RIGHT] )
+    {
+        camera.ProcessKeyboard( RIGHT, deltaTime );
+    }
+}
+
+// Is called whenever a key is pressed/released via GLFW
+void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mode )
+{
+    if( key == GLFW_KEY_ESCAPE && action == GLFW_PRESS )
+    {
+        glfwSetWindowShouldClose(window, GL_TRUE);
+    }
+    
+    if ( key >= 0 && key < 1024 )
+    {
+        if( action == GLFW_PRESS )
+        {
+            keys[key] = true;
+        }
+        else if( action == GLFW_RELEASE )
+        {
+            keys[key] = false;
+        }
+    }
+}
+
+void MouseCallback( GLFWwindow *window, double xPos, double yPos )
+{
+    if( firstMouse )
+    {
+        lastX = xPos;
+        lastY = yPos;
+        firstMouse = false;
+    }
+    
+    GLfloat xOffset = xPos - lastX;
+    GLfloat yOffset = lastY - yPos;  // Reversed since y-coordinates go from bottom to left
+    
+    lastX = xPos;
+    lastY = yPos;
+    
+    camera.ProcessMouseMovement( xOffset, yOffset );
+}
+
+
+void ScrollCallback( GLFWwindow *window, double xOffset, double yOffset )
+{
+    camera.ProcessMouseScroll( yOffset );
 }

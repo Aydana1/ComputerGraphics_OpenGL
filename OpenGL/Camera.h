@@ -108,6 +108,7 @@ class Camera {
                 }
     }
 
+
     void ProcessMouseMovement( GLfloat xOffset, GLfloat yOffset, GLboolean constrainPitch = true )
     {
         xOffset *= this->mouseSensitivity;
