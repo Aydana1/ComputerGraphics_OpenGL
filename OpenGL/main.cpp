@@ -29,7 +29,7 @@ void ScrollCallback( GLFWwindow *window, double xOffset, double yOffset );
 void MouseCallback( GLFWwindow *window, double xPos, double yPos );
 void DoMovement( );
 
-Camera camera( glm::vec3( 0.0f, 0.0f, 3.0f ) );
+Camera camera( glm::vec3( 1.0f, 1.0f, 3.0f ) );
 
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
@@ -38,6 +38,8 @@ bool firstMouse = true;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
+
+glm::vec3 lightPos( 1.0f, 1.0f, 2.0f );
 
 int main() {
     
@@ -123,52 +125,58 @@ int main() {
 //        -0.25f, -0.5f, 0.0f,    0.75f, 0.85f, 0.62f,    0.0f, 0.0f,
     };
     
-    
-    GLfloat cube_vertices[] =
-    {
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f,  0.5f, -0.5f,
-        0.5f,  0.5f, -0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
+    GLfloat cube_vertices[] = {
+        // FRONT
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
         
-        -0.5f, -0.5f,  0.5f,
-        0.5f, -0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
+        // BACK
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
         
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
+        // LEFT
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
         
-        0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
         
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f,  0.5f,
-        0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f, -0.5f,
+        // RIGHT
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
         
-        -0.5f,  0.5f, -0.5f,
-        0.5f,  0.5f, -0.5f,
-        0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-        -0.5f,  0.5f, -0.5f
+        // BOTTOM
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        
+        // TOP
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
     
+
     // CREATE VERTEX ARRAY OBJECT
     GLuint VAO, VBO, EBO;
     glGenVertexArrays( 1, &VAO );
@@ -184,11 +192,11 @@ int main() {
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW );
     
     // Position
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), (GLvoid *)0 );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), (GLvoid *) 0 );
     glEnableVertexAttribArray(0);
     
-    // Color
-    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), (GLvoid *) (3*sizeof(GLfloat)) );
+    // Normal
+    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), (GLvoid *) (3*sizeof(GLfloat)) );
     glEnableVertexAttribArray(1);
     
     // Texture
@@ -203,7 +211,7 @@ int main() {
     glBindVertexArray( lampVAO );
     glBindBuffer( GL_ARRAY_BUFFER, VAO ); // bind to VAO since VBO already contains VAO data
     // fill lampVAO with cube vertices
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(GLfloat), (GLvoid *)0 );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), (GLvoid *)0 );
     glEnableVertexAttribArray( 0 );
     
     glBindVertexArray( 0 );
@@ -229,13 +237,24 @@ int main() {
         glClearColor( 0.2f, 0.2f, 0.2f, 1.0f );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         
+        // CHANGE LIGHT POS OVER TIME
+        lightPos.x = 1.0f + sin( glfwGetTime() ) * 2.0f;
+        lightPos.y = sin( glfwGetTime() ) / 2.0f;
+        lightPos.z = 1.5f * cos( glfwGetTime() );
+        
         // LIGHT SHADER
         lightShader.Use();
         GLuint objLoc = glGetUniformLocation( lightShader.Program, "objectColor" );
         GLuint lightLoc = glGetUniformLocation( lightShader.Program, "lightColor" );
-        glUniform3f( objLoc, 0.5f, 0.78f, 0.96f);  // color of the object
+        // PASS LIGHT (lamp) POSITION TO CONTAINER'S SHADER FOR DOT RPODUCT
+        GLuint lightPosLoc = glGetUniformLocation( lightShader.Program, "lightPos" );
+        GLuint viewPosLoc = glGetUniformLocation( lightShader.Program, "viewPos");
+        glUniform3f( viewPosLoc, camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z );
+        glUniform3f( lightPosLoc, lightPos.x, lightPos.y, lightPos.z );
+        glUniform3f( objLoc, 0.5f, 0.0f, 0.96f);  // color of the object
         glUniform3f( lightLoc, 1.0f, 1.0f, 1.0f);  // white color absorbed from the lamp by the object
 
+        // CAMERA VIEW SPACE
         glm::mat4 view = glm::mat4(1.0f);
         view = camera.GetViewMatrix();
         
@@ -247,8 +266,11 @@ int main() {
         glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
         
         glBindVertexArray( VAO );
+        // MODEL MATRIX
         glm::mat4 model = glm::mat4(1.0f);
+//        model = glm::scale( model, glm::vec3( 0.5f, 1.5f, 2.0f ) );
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+        // DRAW THE CONTAINER
         glDrawArrays( GL_TRIANGLES, 0, 36 );
         glBindVertexArray( 0 );
     
@@ -260,15 +282,22 @@ int main() {
         viewLoc = glGetUniformLocation( lampShader.Program, "view" );
         projLoc = glGetUniformLocation( lampShader.Program, "projection" );
         
+        // MODIFY MODEL MATRIX FOR LAMP CONFIGURATION
         model = glm::mat4(1.0f);
-        model = glm::translate( model, glm::vec3( 1.0f, 1.0f, 2.0f ) );
+        model = glm::translate( model, lightPos );
         model = glm::scale( model, glm::vec3( 0.2f ) );
+        
+        // MOVE LAMP OVER TIME
+//        GLfloat timeValue = glfwGetTime();
+//        model = glm::rotate( model, (GLfloat) sin( timeValue ), glm::vec3( 0.0f, 0.0f, 1.0f ) );
+//        model = glm::translate( model, glm::vec3( 10.0f, 0.0f, 0.0f ) );
         
         glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
         glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
         glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
         
         glBindVertexArray( lampVAO );
+        // DRAW THE LAMP
         glDrawArrays( GL_TRIANGLES, 0, 36 );
         glBindVertexArray( 0 );
         
