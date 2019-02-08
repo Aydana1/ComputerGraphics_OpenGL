@@ -29,7 +29,7 @@ void ScrollCallback( GLFWwindow *window, double xOffset, double yOffset );
 void MouseCallback( GLFWwindow *window, double xPos, double yPos );
 void DoMovement( );
 
-Camera camera( glm::vec3( 1.0f, 1.0f, 3.0f ) );
+Camera camera( glm::vec3( 0.0f, 0.0f, 3.0f ) );
 
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
@@ -39,7 +39,7 @@ bool firstMouse = true;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
-glm::vec3 lightPos( 1.0f, 1.0f, 2.0f );
+glm::vec3 lightPos( 1.2f, 0.5f, 3.0f );
 
 int main() {
     
@@ -238,22 +238,45 @@ int main() {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         
         // CHANGE LIGHT POS OVER TIME
-        lightPos.x = 1.0f + sin( glfwGetTime() ) * 2.0f;
-        lightPos.y = sin( glfwGetTime() ) / 2.0f;
-        lightPos.z = 1.5f * cos( glfwGetTime() );
+//        lightPos.x = 1.0f + sin( glfwGetTime() ) * 2.0f;
+//        lightPos.y = sin( glfwGetTime() ) / 2.0f;
+//        lightPos.z = 1.5f * cos( glfwGetTime() );
         
         // LIGHT SHADER
         lightShader.Use();
-        GLuint objLoc = glGetUniformLocation( lightShader.Program, "objectColor" );
-        GLuint lightLoc = glGetUniformLocation( lightShader.Program, "lightColor" );
-        // PASS LIGHT (lamp) POSITION TO CONTAINER'S SHADER FOR DOT RPODUCT
-        GLuint lightPosLoc = glGetUniformLocation( lightShader.Program, "lightPos" );
         GLuint viewPosLoc = glGetUniformLocation( lightShader.Program, "viewPos");
         glUniform3f( viewPosLoc, camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z );
+        
+        // MATERIAL COLORS
+        GLuint ambientLoc = glGetUniformLocation( lightShader.Program, "material.ambient" );
+        GLuint diffuseLoc = glGetUniformLocation( lightShader.Program, "material.diffuse" );
+        GLuint specularLoc = glGetUniformLocation( lightShader.Program, "material.specular" );
+        GLuint shininessLoc = glGetUniformLocation( lightShader.Program, "material.shininess" );
+        
+        glUniform3f( ambientLoc, 1.0f, 0.5f, 0.31f );
+        glUniform3f( diffuseLoc, 1.0f, 0.5f, 0.31f );
+        glUniform3f( specularLoc, 0.5f, 0.5f, 0.5f );
+        glUniform1f( shininessLoc, 32.0f );
+        
+        // LIGHT INTENSITIES
+        GLuint ambientLightLoc = glGetUniformLocation( lightShader.Program, "light.ambient" );
+        GLuint diffuseLightLoc = glGetUniformLocation( lightShader.Program, "light.diffuse" );
+        GLuint specularLightLoc = glGetUniformLocation( lightShader.Program, "light.specular" );
+        GLuint lightPosLoc = glGetUniformLocation( lightShader.Program, "light.position" );
+        
+        glm::vec3 lightColor;
+        lightColor.x = sin( glfwGetTime() * 1.3f );
+        lightColor.y = sin( glfwGetTime() * 0.7f );
+        lightColor.z = sin( glfwGetTime() * 1.3f );
+        
+        glm::vec3 diffuseColor = lightColor * glm::vec3( 0.5f );
+        glm::vec3 ambientColor = diffuseColor * glm::vec3( 0.2f );
+        
+        glUniform3f( ambientLightLoc, ambientColor.x, ambientColor.y, ambientColor.z );
+        glUniform3f( diffuseLightLoc, diffuseColor.x, diffuseColor.y, diffuseColor.z );
+        glUniform3f( specularLightLoc, 1.0f, 1.0f, 1.0f );  // we need shiny spot so full intensity
         glUniform3f( lightPosLoc, lightPos.x, lightPos.y, lightPos.z );
-        glUniform3f( objLoc, 0.5f, 0.0f, 0.96f);  // color of the object
-        glUniform3f( lightLoc, 1.0f, 1.0f, 1.0f);  // white color absorbed from the lamp by the object
-
+        
         // CAMERA VIEW SPACE
         glm::mat4 view = glm::mat4(1.0f);
         view = camera.GetViewMatrix();
