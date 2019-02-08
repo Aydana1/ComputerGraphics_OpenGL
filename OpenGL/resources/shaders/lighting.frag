@@ -27,7 +27,6 @@ uniform Light light;
 
 void main() {
     // Ambient
-    float ambientStrength = 0.1;
     vec3 ambient = light.ambient * material.ambient;
     
     // Diffuse
@@ -38,11 +37,10 @@ void main() {
     vec3 diffuse = light.diffuse * lightImpact * material.diffuse;
     
     // Specular
-    float specularStrength = 0.2;
     vec3 reflecDir = reflect( -lightDir, normal );
     vec3 viewDir = normalize( viewPos - FragPos );
     float specularImpact = pow( max( dot( viewDir, reflecDir ), 0.0 ), material.shininess );
-    vec3 specular = light.specular * specularStrength * specularImpact * material.specular;
+    vec3 specular = light.specular * specularImpact * material.specular;
     
     vec3 res = (ambient + diffuse + specular);
     

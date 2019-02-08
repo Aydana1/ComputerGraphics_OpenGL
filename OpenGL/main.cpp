@@ -39,7 +39,7 @@ bool firstMouse = true;
 GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
-glm::vec3 lightPos( 1.2f, 0.5f, 3.0f );
+glm::vec3 lightPos( 1.2f, 1.0f, 2.0f );
 
 int main() {
     
@@ -238,9 +238,9 @@ int main() {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         
         // CHANGE LIGHT POS OVER TIME
-//        lightPos.x = 1.0f + sin( glfwGetTime() ) * 2.0f;
-//        lightPos.y = sin( glfwGetTime() ) / 2.0f;
-//        lightPos.z = 1.5f * cos( glfwGetTime() );
+        lightPos.x = 1.0f + sin( glfwGetTime() ) * 2.0f;
+        lightPos.y = sin( glfwGetTime() ) / 2.0f;
+        lightPos.z = 1.5f * cos( glfwGetTime() );
         
         // LIGHT SHADER
         lightShader.Use();
@@ -253,10 +253,10 @@ int main() {
         GLuint specularLoc = glGetUniformLocation( lightShader.Program, "material.specular" );
         GLuint shininessLoc = glGetUniformLocation( lightShader.Program, "material.shininess" );
         
-        glUniform3f( ambientLoc, 1.0f, 0.5f, 0.31f );
-        glUniform3f( diffuseLoc, 1.0f, 0.5f, 0.31f );
-        glUniform3f( specularLoc, 0.5f, 0.5f, 0.5f );
-        glUniform1f( shininessLoc, 32.0f );
+        glUniform3f( ambientLoc, 0.19225f, 0.19225f, 0.19225f );
+        glUniform3f( diffuseLoc, 0.50754f, 0.50754f, 0.50754f );
+        glUniform3f( specularLoc, 0.508273f, 0.508273f, 0.508273f );
+        glUniform1f( shininessLoc, 0.4f * 128.0f );
         
         // LIGHT INTENSITIES
         GLuint ambientLightLoc = glGetUniformLocation( lightShader.Program, "light.ambient" );
@@ -264,16 +264,17 @@ int main() {
         GLuint specularLightLoc = glGetUniformLocation( lightShader.Program, "light.specular" );
         GLuint lightPosLoc = glGetUniformLocation( lightShader.Program, "light.position" );
         
-        glm::vec3 lightColor;
-        lightColor.x = sin( glfwGetTime() * 1.3f );
-        lightColor.y = sin( glfwGetTime() * 0.7f );
-        lightColor.z = sin( glfwGetTime() * 1.3f );
-        
-        glm::vec3 diffuseColor = lightColor * glm::vec3( 0.5f );
-        glm::vec3 ambientColor = diffuseColor * glm::vec3( 0.2f );
-        
-        glUniform3f( ambientLightLoc, ambientColor.x, ambientColor.y, ambientColor.z );
-        glUniform3f( diffuseLightLoc, diffuseColor.x, diffuseColor.y, diffuseColor.z );
+        // CHANGE COLOR OVER TIME
+//        glm::vec3 lightColor;
+//        lightColor.x = sin( glfwGetTime() * 1.3f );
+//        lightColor.y = sin( glfwGetTime() * 0.7f );
+//        lightColor.z = sin( glfwGetTime() * 1.3f );
+//
+//        glm::vec3 diffuseColor = lightColor * glm::vec3( 0.5f );
+//        glm::vec3 ambientColor = diffuseColor * glm::vec3( 0.2f );
+//
+        glUniform3f( ambientLightLoc, 1.0f, 1.0f, 1.0f );
+        glUniform3f( diffuseLightLoc, 1.0f, 1.0f, 1.0f );
         glUniform3f( specularLightLoc, 1.0f, 1.0f, 1.0f );  // we need shiny spot so full intensity
         glUniform3f( lightPosLoc, lightPos.x, lightPos.y, lightPos.z );
         
