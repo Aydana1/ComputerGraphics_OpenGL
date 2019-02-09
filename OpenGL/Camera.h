@@ -156,6 +156,11 @@ class Camera {
         return this->position; 
     }
     
+    glm::vec3 GetFront()
+    {
+        return this->front;
+    }
+    
  
 
 };

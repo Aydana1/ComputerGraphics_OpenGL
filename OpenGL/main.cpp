@@ -29,7 +29,7 @@ void ScrollCallback( GLFWwindow *window, double xOffset, double yOffset );
 void MouseCallback( GLFWwindow *window, double xPos, double yPos );
 void DoMovement( );
 
-Camera camera( glm::vec3( 0.0f, 0.0f, 3.0f ) );
+Camera camera( glm::vec3( 2.0f, 0.0f, 3.0f ) );
 
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
@@ -126,54 +126,61 @@ int main() {
     };
     
     GLfloat cube_vertices[] = {
-        // FRONT
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        // positions          // normals           // texture coords
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
         
-        // BACK
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-        0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
         
-        // LEFT
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
         
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
         
-        // RIGHT
-        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
         
-        // BOTTOM
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-        
-        // TOP
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
+    };
+    
+    glm::vec3 translations[] = {
+        glm::vec3( 1.5f,  -2.0f,  1.0f),
+        glm::vec3( 2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3( 2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3( 1.3f, -2.0f, -2.5f),
+        glm::vec3( 1.5f,  2.0f, -2.5f),
+        glm::vec3( 1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
     };
     
 
@@ -192,15 +199,15 @@ int main() {
     glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW );
     
     // Position
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), (GLvoid *) 0 );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), (GLvoid *) 0 );
     glEnableVertexAttribArray(0);
     
     // Normal
-    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), (GLvoid *) (3*sizeof(GLfloat)) );
+    glVertexAttribPointer( 1, 3, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), (GLvoid *) (3*sizeof(GLfloat)) );
     glEnableVertexAttribArray(1);
     
     // Texture
-    glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 5*sizeof(GLfloat), (GLvoid *) (3*sizeof(GLfloat)) );
+    glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), (GLvoid *) (6*sizeof(GLfloat)) );
     glEnableVertexAttribArray(2);
     
     glBindVertexArray( 0 );
@@ -211,10 +218,64 @@ int main() {
     glBindVertexArray( lampVAO );
     glBindBuffer( GL_ARRAY_BUFFER, VAO ); // bind to VAO since VBO already contains VAO data
     // fill lampVAO with cube vertices
-    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(GLfloat), (GLvoid *)0 );
+    glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, 8*sizeof(GLfloat), (GLvoid *)0 );
     glEnableVertexAttribArray( 0 );
     
     glBindVertexArray( 0 );
+    
+    
+    // CREATING TEXTURE
+    GLuint diffuseMap;
+    
+    int width, height;
+    
+    glGenTextures( 1, &diffuseMap );
+    glBindTexture( GL_TEXTURE_2D, diffuseMap );
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    unsigned char *image = SOIL_load_image( "resources/images/container2.png", &width, &height, 0, SOIL_LOAD_RGB );
+    if (image) {
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image );
+        glGenerateMipmap( GL_TEXTURE_2D );
+    } else {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    
+    SOIL_free_image_data( image );
+    glBindTexture( GL_TEXTURE_2D, 0 );
+    
+    
+    GLuint specularMap;
+    
+    glGenTextures( 1, &specularMap );
+    glBindTexture( GL_TEXTURE_2D, specularMap );
+    
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    image = SOIL_load_image( "resources/images/emmision_letters.jpg", &width, &height, 0, SOIL_LOAD_RGB );
+    if (image) {
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image );
+        glGenerateMipmap( GL_TEXTURE_2D );
+    } else {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    
+    SOIL_free_image_data( image );
+    glBindTexture( GL_TEXTURE_2D, 0 );
+    
+    
+
+    // active shader
+    lightShader.Use();
+    glUniform1i( glGetUniformLocation( lightShader.Program, "material.diffuse" ), 0 ); // diffuseMap is now at texture unit 0
+    glUniform1i( glGetUniformLocation( lightShader.Program, "material.specular" ), 1 );
 
     glm::mat4 projection;
     projection = glm::perspective( camera.GetZoom(), (GLfloat) screenWidth / (GLfloat) screenHeight, 0.1f, 100.f );
@@ -238,31 +299,54 @@ int main() {
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         
         // CHANGE LIGHT POS OVER TIME
-        lightPos.x = 1.0f + sin( glfwGetTime() ) * 2.0f;
-        lightPos.y = sin( glfwGetTime() ) / 2.0f;
-        lightPos.z = 1.5f * cos( glfwGetTime() );
-        
+//        lightPos.x = 1.0f + sin( glfwGetTime() ) * 2.0f;
+//        lightPos.y = sin( glfwGetTime() ) / 2.0f;
+//        lightPos.z = 1.5f * cos( glfwGetTime() );
+
         // LIGHT SHADER
         lightShader.Use();
+        
+        // Bind texture
+        glActiveTexture( GL_TEXTURE0 ); // turning on texture unit location 0 in fragment shader before binding
+        glBindTexture( GL_TEXTURE_2D, diffuseMap );  // bind texture1
+        
+        glActiveTexture( GL_TEXTURE1 );
+        glBindTexture( GL_TEXTURE_2D, specularMap );
+        
         GLuint viewPosLoc = glGetUniformLocation( lightShader.Program, "viewPos");
         glUniform3f( viewPosLoc, camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z );
         
         // MATERIAL COLORS
-        GLuint ambientLoc = glGetUniformLocation( lightShader.Program, "material.ambient" );
-        GLuint diffuseLoc = glGetUniformLocation( lightShader.Program, "material.diffuse" );
+//        GLuint ambientLoc = glGetUniformLocation( lightShader.Program, "material.ambient" );
+//        GLuint diffuseLoc = glGetUniformLocation( lightShader.Program, "material.diffuse" );
         GLuint specularLoc = glGetUniformLocation( lightShader.Program, "material.specular" );
         GLuint shininessLoc = glGetUniformLocation( lightShader.Program, "material.shininess" );
         
-        glUniform3f( ambientLoc, 0.19225f, 0.19225f, 0.19225f );
-        glUniform3f( diffuseLoc, 0.50754f, 0.50754f, 0.50754f );
-        glUniform3f( specularLoc, 0.508273f, 0.508273f, 0.508273f );
-        glUniform1f( shininessLoc, 0.4f * 128.0f );
+//        glUniform3f( ambientLoc, 0.24725f, 0.1995f, 0.0745f );
+//        glUniform3f( diffuseLoc, 0.75164f, 0.60648f, 0.22648f );
+        glUniform3f( specularLoc, 0.0f, 0.0f, 0.0f );
+        glUniform1f( shininessLoc, 64.0f );
         
         // LIGHT INTENSITIES
         GLuint ambientLightLoc = glGetUniformLocation( lightShader.Program, "light.ambient" );
         GLuint diffuseLightLoc = glGetUniformLocation( lightShader.Program, "light.diffuse" );
         GLuint specularLightLoc = glGetUniformLocation( lightShader.Program, "light.specular" );
         GLuint lightPosLoc = glGetUniformLocation( lightShader.Program, "light.position" );
+        
+        // LIGHT DIRECTION
+        GLuint lightDirecLoc = glGetUniformLocation( lightShader.Program, "light.direction" );
+        
+        // ATTENUATION VARIABLES
+        GLuint constantLoc = glGetUniformLocation( lightShader.Program, "light.constant" );
+        GLuint linearLoc = glGetUniformLocation( lightShader.Program, "light.linear" );
+        GLuint quadraticLoc = glGetUniformLocation( lightShader.Program, "light.quadratic" );
+        
+        glUniform1f( constantLoc, 1.0f );
+        glUniform1f( linearLoc, 0.09f );
+        glUniform1f( quadraticLoc, 0.032f );
+        
+        // CUTOFF ANGLE
+        GLuint cutOffLoc = glGetUniformLocation( lightShader.Program, "light.cutOff" );
         
         // CHANGE COLOR OVER TIME
 //        glm::vec3 lightColor;
@@ -273,10 +357,13 @@ int main() {
 //        glm::vec3 diffuseColor = lightColor * glm::vec3( 0.5f );
 //        glm::vec3 ambientColor = diffuseColor * glm::vec3( 0.2f );
 //
-        glUniform3f( ambientLightLoc, 1.0f, 1.0f, 1.0f );
-        glUniform3f( diffuseLightLoc, 1.0f, 1.0f, 1.0f );
+        glUniform3f( ambientLightLoc, 0.2f, 0.2f, 0.2f );
+        glUniform3f( diffuseLightLoc, 0.5f, 0.5f, 0.5f );
         glUniform3f( specularLightLoc, 1.0f, 1.0f, 1.0f );  // we need shiny spot so full intensity
-        glUniform3f( lightPosLoc, lightPos.x, lightPos.y, lightPos.z );
+        
+        glUniform3f( lightDirecLoc, camera.GetFront().x, camera.GetFront().y, camera.GetFront().z );
+        glUniform3f( lightPosLoc, camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z );
+        glUniform1f( cutOffLoc, glm::cos( glm::radians( 6.5f ) ) );
         
         // CAMERA VIEW SPACE
         glm::mat4 view = glm::mat4(1.0f);
@@ -290,28 +377,34 @@ int main() {
         glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
         
         glBindVertexArray( VAO );
+        
         // MODEL MATRIX
-        glm::mat4 model = glm::mat4(1.0f);
-//        model = glm::scale( model, glm::vec3( 0.5f, 1.5f, 2.0f ) );
-        glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
-        // DRAW THE CONTAINER
-        glDrawArrays( GL_TRIANGLES, 0, 36 );
+        for(GLuint i = 0; i < 10; i++) {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate( model, translations[i] );
+            GLfloat angle = glfwGetTime() * i;
+            model = glm::rotate( model, angle / 5.0f, glm::vec3( 1.0f, 0.3f, 0.5f ) );
+            glUniformMatrix4fv( modelLoc, 1, GL_FALSE, glm::value_ptr( model ) );
+            // DRAW THE CONTAINER
+            glDrawArrays( GL_TRIANGLES, 0, 36 );
+        }
+        
         glBindVertexArray( 0 );
-    
-    
+        
         // LAMP SHADER
         lampShader.Use();
-        
+
         modelLoc = glGetUniformLocation( lampShader.Program, "model" );
         viewLoc = glGetUniformLocation( lampShader.Program, "view" );
         projLoc = glGetUniformLocation( lampShader.Program, "projection" );
+        glm::mat4 model = glm::mat4(1.0f);
         
         // MODIFY MODEL MATRIX FOR LAMP CONFIGURATION
         model = glm::mat4(1.0f);
         model = glm::translate( model, lightPos );
         model = glm::scale( model, glm::vec3( 0.2f ) );
         
-        // MOVE LAMP OVER TIME
+         //MOVE LAMP OVER TIME
 //        GLfloat timeValue = glfwGetTime();
 //        model = glm::rotate( model, (GLfloat) sin( timeValue ), glm::vec3( 0.0f, 0.0f, 1.0f ) );
 //        model = glm::translate( model, glm::vec3( 10.0f, 0.0f, 0.0f ) );
@@ -320,10 +413,10 @@ int main() {
         glUniformMatrix4fv( viewLoc, 1, GL_FALSE, glm::value_ptr( view ) );
         glUniformMatrix4fv( projLoc, 1, GL_FALSE, glm::value_ptr( projection ) );
         
-        glBindVertexArray( lampVAO );
         // DRAW THE LAMP
-        glDrawArrays( GL_TRIANGLES, 0, 36 );
-        glBindVertexArray( 0 );
+        //glBindVertexArray( lampVAO );
+        //glDrawArrays( GL_TRIANGLES, 0, 36 );
+        //glBindVertexArray( 0 );
         
         // swap screen buffers
         glfwSwapBuffers( window );
