@@ -6,15 +6,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "OpenGL/resources/shaders/lighting.frag"
-            timestampString = "571398572.380721"
+            timestampString = "571468950.898991"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "25"
-            endingLineNumber = "25"
+            startingLineNumber = "40"
+            endingLineNumber = "40"
             landmarkName = "unknown"
             landmarkType = "0">
          </BreakpointContent>
