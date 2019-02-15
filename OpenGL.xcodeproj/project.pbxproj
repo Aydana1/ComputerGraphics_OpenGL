@@ -12,6 +12,7 @@
 		FD26E1A921E8837200A91D1E /* image_DXT.c in Sources */ = {isa = PBXBuildFile; fileRef = FD26E19621E8837100A91D1E /* image_DXT.c */; };
 		FD26E1AA21E8837200A91D1E /* SOIL2.c in Sources */ = {isa = PBXBuildFile; fileRef = FD26E19921E8837100A91D1E /* SOIL2.c */; };
 		FD26E1AB21E8837200A91D1E /* etc1_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = FD26E1A321E8837100A91D1E /* etc1_utils.c */; };
+		FD9B16BD2211A84800E3AAEF /* libassimp.4.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FD9B16BC2211A84800E3AAEF /* libassimp.4.1.0.dylib */; };
 		FDDB15E421E4A9730089A4A7 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDDB15E321E4A9730089A4A7 /* main.cpp */; };
 		FDDB15EC21E4AA360089A4A7 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FDDB15EB21E4AA360089A4A7 /* OpenGL.framework */; };
 		FDDB15EE21E4AB110089A4A7 /* libglfw.3.2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FDDB15ED21E4AB110089A4A7 /* libglfw.3.2.dylib */; };
@@ -64,6 +65,9 @@
 		FD26E1A521E8837100A91D1E /* stbi_pkm_c.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stbi_pkm_c.h; sourceTree = "<group>"; };
 		FD26E1A621E8837100A91D1E /* stbi_DDS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stbi_DDS.h; sourceTree = "<group>"; };
 		FD26E1A721E8837100A91D1E /* pvr_helper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pvr_helper.h; sourceTree = "<group>"; };
+		FD95782A220FF40D00E44C19 /* Mesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Mesh.h; sourceTree = "<group>"; };
+		FD9B16BC2211A84800E3AAEF /* libassimp.4.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.4.1.0.dylib; path = ../../../../usr/local/Cellar/assimp/4.1.0/lib/libassimp.4.1.0.dylib; sourceTree = "<group>"; };
+		FD9B16BE2211A99200E3AAEF /* Model.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Model.h; sourceTree = "<group>"; };
 		FDD9EF9021EF17ED0065868D /* Camera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
 		FDDB15E021E4A9720089A4A7 /* OpenGL */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = OpenGL; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDDB15E321E4A9730089A4A7 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
@@ -77,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD9B16BD2211A84800E3AAEF /* libassimp.4.1.0.dylib in Frameworks */,
 				FDDB15F021E4F69D0089A4A7 /* libGLEW.2.1.0.dylib in Frameworks */,
 				FDDB15EE21E4AB110089A4A7 /* libglfw.3.2.dylib in Frameworks */,
 				FDDB15EC21E4AA360089A4A7 /* OpenGL.framework in Frameworks */,
@@ -137,6 +142,8 @@
 				FD26E19221E8837100A91D1E /* SOIL2 */,
 				FD26E18E21E86A7D00A91D1E /* resources */,
 				FDDB15E321E4A9730089A4A7 /* main.cpp */,
+				FD95782A220FF40D00E44C19 /* Mesh.h */,
+				FD9B16BE2211A99200E3AAEF /* Model.h */,
 				FD26E18D21E865BE00A91D1E /* Shader.h */,
 				FDD9EF9021EF17ED0065868D /* Camera.h */,
 			);
@@ -146,6 +153,7 @@
 		FDDB15EA21E4AA360089A4A7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FD9B16BC2211A84800E3AAEF /* libassimp.4.1.0.dylib */,
 				FDDB15EF21E4F69D0089A4A7 /* libGLEW.2.1.0.dylib */,
 				FDDB15ED21E4AB110089A4A7 /* libglfw.3.2.dylib */,
 				FDDB15EB21E4AA360089A4A7 /* OpenGL.framework */,
@@ -341,6 +349,7 @@
 					"$(inherited)",
 					/usr/local/Cellar/glfw/3.2.1/lib,
 					/usr/local/Cellar/glew/2.1.0/lib,
+					/usr/local/Cellar/assimp/4.1.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -357,6 +366,7 @@
 					"$(inherited)",
 					/usr/local/Cellar/glfw/3.2.1/lib,
 					/usr/local/Cellar/glew/2.1.0/lib,
+					/usr/local/Cellar/assimp/4.1.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
