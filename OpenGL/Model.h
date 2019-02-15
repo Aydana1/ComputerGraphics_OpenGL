@@ -38,13 +38,22 @@ public:
     void Draw( Shader shader )
     {
         
+        glUniform1f( glGetUniformLocation( shader.Program, "object.shininess" ), 10.0f );
+                
+        glUniform3f( glGetUniformLocation( shader.Program, "_Color" ), 0.1f, 0.1f, 0.1f );
+        glUniform3f( glGetUniformLocation( shader.Program, "_UnlitColor" ), 0.5f, 0.5f, 0.5f );
+        glUniform1f( glGetUniformLocation( shader.Program, "_DiffuseThreshold" ), 0.1f );
+        glUniform3f( glGetUniformLocation( shader.Program, "_OutlineColor" ), 0.0f, 0.0f, 0.0f );
+        glUniform1f( glGetUniformLocation( shader.Program, "_LitOutlineThickness" ), 0.1f );
+        glUniform1f( glGetUniformLocation( shader.Program, "_UnlitOutlineThickness" ), 0.4f );
+ 
         if( !textureExists ) {
 
             glUniform1f( glGetUniformLocation( shader.Program, "materialOn" ), GL_FALSE );
 
             glUniform3f( glGetUniformLocation( shader.Program, "object.ambient" ), 0.1f, 0.1f, 0.1f );
             glUniform3f( glGetUniformLocation( shader.Program, "object.diffuse" ), 1.0f, 1.0f, 0.0f );
-            glUniform3f( glGetUniformLocation( shader.Program, "object.specular" ), 1.0f, 1.0f, 0.0f );
+            glUniform3f( glGetUniformLocation( shader.Program, "object.specular" ), 0.5f, 0.5f, 0.5f );
 
         } else {
             glUniform1f( glGetUniformLocation( shader.Program, "materialOn" ), GL_TRUE );
@@ -137,20 +146,19 @@ private:
                 vertex.TexCoords = vec;
             } else {
     
-//                vertex.TexCoords = glm::vec2( 0.0f, 0.0f );
+                vertex.TexCoords = glm::vec2( 0.0f, 0.0f );
                 
-                vertex.TexCoords = glm::vec2( vertex.Position.x*1.2f, vertex.Position.y*1.2f );
-
-                TextureFromFile( "cat.png", "resources/images" );
+//                vertex.TexCoords = glm::vec2( vertex.Position.x*1.2f, vertex.Position.y*1.2f );
+//                TextureFromFile( "cat.png", "resources/images" );
                 
                 textureExists = false;
 
             }
             
             // Colors
-            vector.x = 0.0000055f * i;
-            vector.y = 0.0000029f * i;
-            vector.z = 0.000099f * i;
+            vector.x = 0.0000085f * i;
+            vector.y = 0.0000089f * i;
+            vector.z = 0.000029f * i;
             
             vertex.Color = vector;
             
@@ -211,7 +219,7 @@ private:
 //            {   // If texture hasn't been loaded already, load it
                 Texture texture;
                 texture.id = TextureFromFile( str.C_Str( ), this->directory );
-                std::cout << "TEXTURE ID: " << texture.id << std::endl;
+//                std::cout << "TEXTURE ID: " << texture.id << std::endl;
                 texture.type = typeName;
                 texture.path = str;
                 textures.push_back( texture );
@@ -228,11 +236,11 @@ GLint TextureFromFile( const char *path, string directory )
 {
     //Generate texture ID and load texture data
     string filename = string( path );  // filename here is an image name
-    filename = "cat.png";
-    std::cout << "PATH: " << filename << std::endl;
-//    filename = directory + '/' + filename;
-    filename = "resources/images/"  + filename;
-    std::cout << "FILENAME: " << filename << std::endl;
+//    filename = "cat.png";
+//    std::cout << "PATH: " << filename << std::endl;
+    filename = directory + '/' + filename;
+//    filename = "resources/images/"  + filename;
+//    std::cout << "FILENAME: " << filename << std::endl;
 
     GLuint textureID;
     glGenTextures( 1, &textureID );

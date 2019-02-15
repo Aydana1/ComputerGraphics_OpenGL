@@ -31,9 +31,9 @@ void KeyCallback( GLFWwindow *window, int key, int scancode, int action, int mod
 void ScrollCallback( GLFWwindow *window, double xOffset, double yOffset );
 void MouseCallback( GLFWwindow *window, double xPos, double yPos );
 void DoMovement( );
+void ShaderTune( GLFWwindow *window );
 
 Camera camera( glm::vec3( 1.0f, -1.0f, 3.0f ) );
-
 
 GLfloat lastX = WIDTH / 2.0;
 GLfloat lastY = HEIGHT / 2.0;
@@ -44,6 +44,12 @@ GLfloat deltaTime = 0.0f;
 GLfloat lastFrame = 0.0f;
 
 glm::vec3 lightPos( 1.2f, 1.0f, 2.0f );
+
+// SHADER ALTERNATION
+GLboolean direcLightOn = false;
+GLboolean spotLightOn = false;
+GLboolean phongOn = false;
+GLboolean celOn = false;
 
 int main() {
 
@@ -60,7 +66,6 @@ int main() {
 
     int screenWidth, screenHeight;
     glfwGetFramebufferSize(window, &screenWidth, &screenHeight);  //read screen wdith and height
-
 
     // Set the required callback functions
     glfwSetKeyCallback( window, KeyCallback );
@@ -105,7 +110,7 @@ int main() {
 //    Shader lamp3Shader( "resources/shaders/lamp3.vs", "resources/shaders/lamp3.frag" );
     
     Shader shader( "resources/shaders/model.vs", "resources/shaders/model.frag" );
-    Model ourModel( "resources/models/nanosuit.obj" );
+    Model ourModel( "resources/models/caffine.obj" );
     
     glm::mat4 projection;
     projection = glm::perspective( camera.GetZoom(), (GLfloat) screenWidth / (GLfloat) screenHeight, 0.1f, 100.f );
@@ -120,12 +125,9 @@ int main() {
         // check if any events are enabled such as key, mouse movements
         glfwPollEvents();
         DoMovement();
+        ShaderTune( window );
 
-        processInput( window );
-
-        // Render
-        // clear color buffer
-        glClearColor( 0.2f, 0.2f, 0.2f, 1.0f );
+        glClearColor( 0.2f, 0.6f, 0.5f, 1.0f );
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
         shader.Use();
@@ -135,14 +137,22 @@ int main() {
 //        GLuint fColorLoc = glGetUniformLocation( shader.Program, "color" );
 //        glUniform3f( fColorLoc, 0.75f, 0.67f, 0.25f );
         
+        // LIGHTINGS
+//        glUniform1f( glGetUniformLocation( shader.Program, "direcLight" ), direcLightOn );
+        glUniform1f( glGetUniformLocation( shader.Program, "flashLight" ), spotLightOn );
+        glUniform1f( glGetUniformLocation( shader.Program, "phongShader" ), phongOn );
+        glUniform1f( glGetUniformLocation( shader.Program, "celShader" ), celOn );
+        
         
         GLuint viewPosLoc = glGetUniformLocation( shader.Program, "viewPos");
         glUniform3f( viewPosLoc, camera.GetPosition().x, camera.GetPosition().y, camera.GetPosition().z );
         
+        glUniform1f( glGetUniformLocation( shader.Program, "material.shininess" ), 32.0f );
+        
         // DIRECTIONAL LIGHT
         glUniform3f( glGetUniformLocation( shader.Program, "dirLight.ambient" ), 0.1f, 0.1f, 0.1f );
         glUniform3f( glGetUniformLocation( shader.Program, "dirLight.diffuse" ),0.8f, 0.8f, 0.8f );
-        glUniform3f( glGetUniformLocation( shader.Program, "dirLight.specular" ), 1.0f, 0.0f, 0.0f );
+        glUniform3f( glGetUniformLocation( shader.Program, "dirLight.specular" ), 0.5f, 0.5f, 0.5f );
         glUniform3f( glGetUniformLocation( shader.Program, "dirLight.direction" ),  -0.2f, -1.0f, -0.3f );
         
     
@@ -150,7 +160,7 @@ int main() {
         glUniform3f( glGetUniformLocation( shader.Program, "spotLight.direction" ), camera.GetFront().x, camera.GetFront().y, camera.GetFront().z );
         glUniform3f( glGetUniformLocation( shader.Program, "spotLight.ambient" ), 0.05f, 0.05f, 0.05f );
         glUniform3f( glGetUniformLocation( shader.Program, "spotLight.diffuse" ), 0.5f, 0.5f, 0.5f );
-        glUniform3f( glGetUniformLocation( shader.Program, "spotLight.specular" ), 1.0f, 1.0f, 1.0f );
+        glUniform3f( glGetUniformLocation( shader.Program, "spotLight.specular" ), 1.0f, 0.8f, 0.8f );
         glUniform1f( glGetUniformLocation( shader.Program, "spotLight.constant" ), 1.0f );
         glUniform1f( glGetUniformLocation( shader.Program, "spotLight.linear" ), 0.09f );
         glUniform1f( glGetUniformLocation( shader.Program, "spotLight.quadratic" ), 0.032f );
@@ -165,7 +175,7 @@ int main() {
         glm::mat4 model = glm::mat4(1.0f);
         //model = glm::rotate( model, (GLfloat) glfwGetTime(), glm::vec3( 0.0f, 0.0f, 1.0f ) );
         model = glm::translate( model, glm::vec3( 0.0f, -1.75f, 0.0f ) ); // Translate it down a bit so it's at the center of the scene
-        model = glm::scale( model, glm::vec3( 0.2f, 0.2f, 0.2f ) );    // It's a bit too big for our scene, so scale it down
+//        model = glm::scale( model, glm::vec3( 0.2f, 0.2f, 0.2f ) );    // It's a bit too big for our scene, so scale it down
         
         
         glUniformMatrix4fv( glGetUniformLocation( shader.Program, "model" ), 1, GL_FALSE, glm::value_ptr( model ) );
@@ -181,27 +191,6 @@ int main() {
 
     return EXIT_SUCCESS;
 
-}
-
-void processInput( GLFWwindow *window ) {
-
-    if( glfwGetKey( window, GLFW_KEY_ESCAPE ) == GLFW_PRESS ) {
-        glfwWindowShouldClose( window );
-    }
-
-    if( glfwGetKey( window, GLFW_KEY_UP) == GLFW_PRESS ) {
-        mixVal += 0.01f;
-        if( mixVal >= 1.0f ) {
-            mixVal = 1.0f;
-        }
-    }
-
-    if( glfwGetKey( window, GLFW_KEY_DOWN) == GLFW_PRESS ) {
-        mixVal -= 0.01f;
-        if( mixVal <= 0.0f ) {
-            mixVal = 0.0f;
-        }
-    }
 }
 
 // Moves/alters the camera positions based on user input
@@ -227,6 +216,45 @@ void DoMovement( )
     {
         camera.ProcessKeyboard( RIGHT, deltaTime );
     }
+}
+
+void ShaderTune( GLFWwindow *window )
+{
+
+    if( glfwGetKey( window, GLFW_KEY_P ) == GLFW_PRESS ) {
+        // PHONG
+        if( celOn )
+            celOn = false;
+    
+        if( !phongOn ) {
+            phongOn = true;
+        } else {
+            phongOn = false;
+        }
+    }
+    
+    if( glfwGetKey( window, GLFW_KEY_C ) == GLFW_PRESS ) {
+        // CEL
+        if( phongOn )
+            phongOn = false;
+        
+        if( !celOn ) {
+            celOn = true;
+        } else {
+            celOn = false;
+        }
+    }
+    
+    if( glfwGetKey( window, GLFW_KEY_F ) == GLFW_PRESS ) {
+        // SPOTLIGHT
+        // if off then turn on
+        if( !spotLightOn ) {
+            spotLightOn = true;
+        } else {
+            spotLightOn = false;
+        }
+    }
+
 }
 
 // Is called whenever a key is pressed/released via GLFW
